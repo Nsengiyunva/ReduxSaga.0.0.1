@@ -2,27 +2,37 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { connect } from 'react-redux';
+
 class App extends Component {
   render() {
+    const { fetching, dog, error, onRequestDog } = this.props;
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <img src={ dog || logo} className="App-logo" alt="logo" />
+          <h6> Welcome to the dog saga </h6>
         </header>
+        {dog ? <p className="App-intro"> Keep clicking for new dogs </p> : <p>Replace the react icon with a dog!</p>}
+        {fetching ? (<button disabled>Fetching...</button>) : (<button onClick={onRequestDog}></button>)}
+        {error && <p>Something went horribly wrong. try again later</p>}
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps =  state => {
+  return {
+    fetching: state.fetching,
+    dog: state.dog,
+    error: state.error
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onRequestDog: () => dispatch( { type: "API_CALL_REQUEST" } )
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
